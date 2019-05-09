@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(tebakkata)
+project(TebakAngka)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -19,8 +19,8 @@ if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-add_executable(tebakkata main.cpp)
+add_executable(TebakAngka main.cpp)
 
 if(Boost_FOUND)
-    target_link_libraries(tebakkata ${Boost_LIBRARIES} -lpthread -lcurl)
+    target_link_libraries(TebakAngka ${Boost_LIBRARIES} -lpthread -lcurl)
 endif()
