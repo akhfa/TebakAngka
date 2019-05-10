@@ -3,8 +3,8 @@
 #include <boost/algorithm/string.hpp>
 #include "crow_all.h"
 
-std::string account_sid = "";
-std::string auth_token = "";
+std::string account_sid;
+std::string auth_token;
 
 std::map<std::string, int> state;
 
@@ -110,7 +110,7 @@ void process(std::map<std::string, std::string> &mp) {
             int state_digit[4];
             int state_bitmask = 0;
             int cur = curstate;
-            for (int i=0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 state_digit[3 - i] = cur % 10;
                 state_bitmask |= (1 << state_digit[3 - i]);
                 cur /= 10;
@@ -119,13 +119,13 @@ void process(std::map<std::string, std::string> &mp) {
             int b = 0;
             int bitmask = 0;
             int guess_value = 0;
-            for (int i=0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 if (guess[i] < '0' || guess[i] > '9') {
                     message = "Guess must be number only.";
                     send_message(mp["From"], mp["To"], message, response);
                     return;
                 }
-                int x = (int)(guess[i] - '0');
+                int x = (int) (guess[i] - '0');
                 if ((bitmask & (1 << x)) > 0) {
                     message = "Guess must be unique digits.";
                     send_message(mp["From"], mp["To"], message, response);
@@ -155,13 +155,27 @@ void process(std::map<std::string, std::string> &mp) {
     }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        std::cout << "usage: TebakAngka <account_sid> <auth_token>" << std::endl;
+        return 1;
+    }
+    account_sid = std::string(argv[1]);
+    auth_token = std::string(argv[2]);
+
     srand(time(NULL));
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")([]() {
         return "Hello cpp";
     });
+
+    CROW_ROUTE(app, "/hello/<int>")
+            ([](int count) {
+                std::ostringstream os;
+                os << "Hello " << count;
+                return crow::response(os.str());
+            });
 
     CROW_ROUTE(app, "/message")
             .methods("POST"_method)
